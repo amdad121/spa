@@ -18,6 +18,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const getUser = async () => {
     // authenticated.value = false
+    loading.value = true
 
     try {
       const response = await axios.get('api/user')
@@ -28,12 +29,11 @@ export const useAuthStore = defineStore('auth', () => {
       if (!response.data.email_verified_at) {
         this.router.push({ name: 'email-verify' })
       }
-
-      loading.value = false
     } catch (error) {
       // console.log(error.response.data.message)
-      loading.value = false
       authenticated.value = false
+    } finally {
+      loading.value = false
     }
   }
 
@@ -47,7 +47,6 @@ export const useAuthStore = defineStore('auth', () => {
 
       await getUser()
 
-      processing.value = false
       authenticated.value = true
 
       this.router.push({ name: 'dashboard' })
@@ -55,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
       }
-
+    } finally {
       processing.value = false
     }
   }
@@ -68,7 +67,6 @@ export const useAuthStore = defineStore('auth', () => {
       await csrf()
       await axios.post('register', data)
 
-      processing.value = false
       authenticated.value = true
 
       this.router.push({ name: 'dashboard' })
@@ -76,13 +74,14 @@ export const useAuthStore = defineStore('auth', () => {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
       }
-
+    } finally {
       processing.value = false
     }
   }
 
   const handleLogout = async () => {
     authErrors.value = []
+    processing.value = true
 
     try {
       await csrf()
@@ -96,6 +95,8 @@ export const useAuthStore = defineStore('auth', () => {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
       }
+    } finally {
+      processing.value = false
     }
   }
 
@@ -109,14 +110,12 @@ export const useAuthStore = defineStore('auth', () => {
 
       authStatus.value = response.data.status
 
-      processing.value = false
-
       this.router.push({ name: 'login' })
     } catch (error) {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
       }
-
+    } finally {
       processing.value = false
     }
   }
@@ -131,20 +130,19 @@ export const useAuthStore = defineStore('auth', () => {
 
       authStatus.value = response.data.status
 
-      processing.value = false
-
       this.router.push({ name: 'login' })
     } catch (error) {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
       }
-
+    } finally {
       processing.value = false
     }
   }
 
   const handleVerificationSend = async () => {
     authErrors.value = []
+    processing.value = true
 
     try {
       await csrf()
@@ -155,6 +153,8 @@ export const useAuthStore = defineStore('auth', () => {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
       }
+    } finally {
+      processing.value = false
     }
   }
 
