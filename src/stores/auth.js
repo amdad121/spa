@@ -37,16 +37,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const handleLogin = async (data) => {
+  const handleLogin = async ({ ...data }) => {
     authErrors.value = []
     processing.value = true
 
     try {
       await csrf()
-      await axios.post('login', {
-        email: data.email,
-        password: data.password,
-      })
+      await axios.post('login', data)
 
       await getUser()
 
@@ -63,18 +60,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const handleRegister = async (data) => {
+  const handleRegister = async ({ ...data }) => {
     authErrors.value = []
     processing.value = true
 
     try {
       await csrf()
-      await axios.post('register', {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        password_confirmation: data.password_confirmation,
-      })
+      await axios.post('register', data)
 
       processing.value = false
       authenticated.value = true
@@ -129,18 +121,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const handleResetPassword = async (data) => {
+  const handleResetPassword = async ({ ...data }) => {
     authErrors.value = []
     processing.value = true
 
     try {
       await csrf()
-      const response = await axios.post('reset-password', {
-        token: data.token,
-        email: data.email,
-        password: data.password,
-        password_confirmation: data.password_confirmation,
-      })
+      const response = await axios.post('reset-password', data)
 
       authStatus.value = response.data.status
 

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import GuestLayout from '../../Layouts/GuestLayout.vue'
 
@@ -8,6 +8,7 @@ const auth = useAuthStore()
 const form = ref({
   email: null,
   password: null,
+  remember: false,
 })
 </script>
 
@@ -36,6 +37,12 @@ const form = ref({
         <div class="text-red-500" v-if="auth.authErrors.password">
           {{ auth.authErrors.password[0] }}
         </div>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" v-model="form.remember" />
+          Remember Me
+        </label>
       </div>
       <div>
         <button
