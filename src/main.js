@@ -11,8 +11,8 @@ import axios from 'axios'
 axios.defaults.withCredentials = true
 axios.defaults.baseURL = import.meta.env.VITE_API_URL
 
-const app = createApp(App)
 const pinia = createPinia()
+const app = createApp(App)
 
 pinia.use(({ store }) => {
   store.router = markRaw(router)

@@ -1,9 +1,10 @@
 <script setup>
+import DefaultLayout from '../Layouts/DefaultLayout.vue'
 import TheWelcome from '../components/TheWelcome.vue'
 </script>
 
 <template>
-  <main>
+  <DefaultLayout>
     <TheWelcome />
-  </main>
+  </DefaultLayout>
 </template>

@@ -13,37 +13,37 @@ const router = createRouter({
     {
       path: '/register',
       name: 'register',
-      meta: { middleware: 'guest' },
+      meta: { requiresAuth: false },
       component: () => import('../views/Auth/Register.vue'),
     },
     {
       path: '/login',
       name: 'login',
-      meta: { middleware: 'guest' },
+      meta: { requiresAuth: false },
       component: () => import('../views/Auth/Login.vue'),
     },
     {
       path: '/forgot-password',
       name: 'forgot-password',
-      meta: { middleware: 'guest' },
+      meta: { requiresAuth: false },
       component: () => import('../views/Auth/ForgotPassword.vue'),
     },
     {
       path: '/password-reset/:token',
       name: 'password-reset',
-      meta: { middleware: 'guest' },
+      meta: { requiresAuth: false },
       component: () => import('../views/Auth/ResetPassword.vue'),
     },
     {
       path: '/dashboard',
       name: 'dashboard',
-      meta: { middleware: 'auth' },
+      meta: { requiresAuth: true },
       component: () => import('../views/Dashboard.vue'),
     },
     {
       path: '/email-verify',
       name: 'email-verify',
-      meta: { middleware: 'auth' },
+      meta: { requiresAuth: true },
       component: () => import('../views/Auth/EmailVerify.vue'),
     },
     {
@@ -57,11 +57,15 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore()
   auth.setErrorsEmpty()
   // auth.setStatusEmpty()
-  next()
+  await auth.getUser()
+  // console.log(to.meta.requiresAuth && !auth.authUser.length)
+  if (to.meta.requiresAuth && !auth.authUser.length) next({ name: 'login' })
+  // else if (to.meta.requiresAuth && auth.authUser) next({ name: 'dashboard' })
+  else next()
 })
 
 export default router

@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div>Guest</div>
+    <div>Default</div>
     <slot />
   </main>
 </template>
