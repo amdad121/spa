@@ -3,11 +3,12 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 export const useAuthStore = defineStore('auth', () => {
-  const authUser = ref(null)
+  const user = ref(null)
   const authErrors = ref([])
   const authStatus = ref(null)
   const processing = ref(false)
-  const loading = ref(false)
+  const loading = ref(true)
+  const authenticated = ref(false)
 
   const setErrorsEmpty = () => (authErrors.value = [])
 
@@ -16,11 +17,13 @@ export const useAuthStore = defineStore('auth', () => {
   const csrf = () => axios.get('sanctum/csrf-cookie')
 
   const getUser = async () => {
-    loading.value = true
+    // authenticated.value = false
+
     try {
-      await csrf()
       const response = await axios.get('api/user')
-      authUser.value = response.data
+
+      user.value = response.data
+      authenticated.value = true
 
       if (!response.data.email_verified_at) {
         this.router.push({ name: 'email-verify' })
@@ -30,6 +33,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error) {
       // console.log(error.response.data.message)
       loading.value = false
+      authenticated.value = false
     }
   }
 
@@ -44,7 +48,10 @@ export const useAuthStore = defineStore('auth', () => {
         password: data.password,
       })
 
+      await getUser()
+
       processing.value = false
+      authenticated.value = true
 
       this.router.push({ name: 'dashboard' })
     } catch (error) {
@@ -70,6 +77,7 @@ export const useAuthStore = defineStore('auth', () => {
       })
 
       processing.value = false
+      authenticated.value = true
 
       this.router.push({ name: 'dashboard' })
     } catch (error) {
@@ -88,7 +96,8 @@ export const useAuthStore = defineStore('auth', () => {
       await csrf()
       await axios.post('logout')
 
-      authUser.value = null
+      user.value = null
+      authenticated.value = false
 
       this.router.push({ name: 'login' })
     } catch (error) {
@@ -163,10 +172,12 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    authUser,
+    user,
     authErrors,
     authStatus,
     processing,
+    loading,
+    authenticated,
     setErrorsEmpty,
     // setStatusEmpty,
     getUser,

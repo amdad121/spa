@@ -71,5 +71,7 @@ const form = ref({
     </form>
     <br />
     <router-link :to="{ name: 'forgot-password' }">Forgot Password</router-link>
+    <br />
+    <router-link :to="{ name: 'home' }">Back to Home</router-link>
   </guest-layout>
 </template>

@@ -18,7 +18,7 @@ const auth = useAuthStore()
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <template v-if="!auth.authUser">
+        <template v-if="!auth.user">
           <RouterLink :to="{ name: 'register' }">Register</RouterLink>
           <RouterLink :to="{ name: 'login' }">Login</RouterLink>
         </template>
