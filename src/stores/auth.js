@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const setErrorsEmpty = () => (authErrors.value = [])
 
-  // const setStatusEmpty = () => (authStatus.value = null)
+  const setStatusEmpty = () => (authStatus.value = null)
 
   const csrf = () => axios.get('sanctum/csrf-cookie')
 
@@ -28,10 +28,6 @@ export const useAuthStore = defineStore('auth', () => {
 
       user.value = response.data
       authenticated.value = true
-
-      if (!response.data.email_verified_at) {
-        router.push({ name: 'email-verify' })
-      }
     } catch (error) {
       // console.log(error.response.data.message)
       user.value = null
@@ -51,7 +47,11 @@ export const useAuthStore = defineStore('auth', () => {
 
       await getUser()
 
-      router.push({ name: 'dashboard' })
+      if (!user.value.email_verified_at) {
+        router.push({ name: 'email-verify' })
+      } else {
+        router.push({ name: 'dashboard' })
+      }
     } catch (error) {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
@@ -168,7 +168,7 @@ export const useAuthStore = defineStore('auth', () => {
     loading,
     authenticated,
     setErrorsEmpty,
-    // setStatusEmpty,
+    setStatusEmpty,
     getUser,
     handleLogin,
     handleRegister,

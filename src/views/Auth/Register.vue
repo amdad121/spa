@@ -20,7 +20,6 @@ const form = ref({
     </h3>
     <form
       @submit.prevent="auth.handleRegister(form)"
-      method="post"
       class="flex flex-col gap-4"
     >
       <div class="flex flex-col gap-2">

@@ -58,6 +58,10 @@ router.beforeEach(async (to, from, next) => {
 
   auth.setErrorsEmpty()
 
+  // if (!auth.authStatus) {
+  //   auth.setStatusEmpty()
+  // }
+
   if (to.meta.middleware == 'guest' && auth.authenticated) {
     next({ name: 'dashboard' })
   } else if (to.meta.middleware == 'auth' && !auth.authenticated) {

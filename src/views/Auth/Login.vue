@@ -15,12 +15,13 @@ const form = ref({
 <template>
   <GuestLayout>
     <h3 class="mb-4 border-b pb-2 text-center text-xl font-semibold">Login</h3>
-    <div v-if="auth.authStatus">{{ auth.authStatus }}</div>
-    <form
-      @submit.prevent="auth.handleLogin(form)"
-      method="post"
-      class="flex flex-col gap-4"
+    <div
+      class="mb-4 rounded bg-green-200 px-4 py-2 text-green-800"
+      v-if="auth.authStatus"
     >
+      {{ auth.authStatus }}
+    </div>
+    <form @submit.prevent="auth.handleLogin(form)" class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
         <label for="email">Email</label>
         <input

@@ -15,7 +15,6 @@ const email = ref(null)
     </h3>
     <form
       @submit.prevent="auth.handleForgotPassword(email)"
-      method="post"
       class="flex flex-col gap-4"
     >
       <div class="flex flex-col gap-2">
