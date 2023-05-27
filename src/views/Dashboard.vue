@@ -1,13 +1,8 @@
 <script setup>
-import { onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import AuthenticatedLayout from '../Layouts/AuthenticatedLayout.vue'
 
 const auth = useAuthStore()
-
-onMounted(async () => {
-  await auth.getUser()
-})
 </script>
 
 <template>

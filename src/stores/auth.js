@@ -1,6 +1,7 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
@@ -9,6 +10,8 @@ export const useAuthStore = defineStore('auth', () => {
   const processing = ref(false)
   const loading = ref(true)
   const authenticated = ref(false)
+
+  const router = useRouter()
 
   const setErrorsEmpty = () => (authErrors.value = [])
 
@@ -27,10 +30,11 @@ export const useAuthStore = defineStore('auth', () => {
       authenticated.value = true
 
       if (!response.data.email_verified_at) {
-        this.router.push({ name: 'email-verify' })
+        router.push({ name: 'email-verify' })
       }
     } catch (error) {
       // console.log(error.response.data.message)
+      user.value = null
       authenticated.value = false
     } finally {
       loading.value = false
@@ -47,9 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       await getUser()
 
-      authenticated.value = true
-
-      this.router.push({ name: 'dashboard' })
+      router.push({ name: 'dashboard' })
     } catch (error) {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
@@ -67,9 +69,9 @@ export const useAuthStore = defineStore('auth', () => {
       await csrf()
       await axios.post('register', data)
 
-      authenticated.value = true
+      await getUser()
 
-      this.router.push({ name: 'dashboard' })
+      router.push({ name: 'dashboard' })
     } catch (error) {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
@@ -90,7 +92,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null
       authenticated.value = false
 
-      this.router.push({ name: 'login' })
+      router.push({ name: 'login' })
     } catch (error) {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
@@ -110,7 +112,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       authStatus.value = response.data.status
 
-      this.router.push({ name: 'login' })
+      router.push({ name: 'login' })
     } catch (error) {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
@@ -130,7 +132,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       authStatus.value = response.data.status
 
-      this.router.push({ name: 'login' })
+      router.push({ name: 'login' })
     } catch (error) {
       if (error.response?.status === 422) {
         authErrors.value = error.response.data.errors
@@ -157,6 +159,14 @@ export const useAuthStore = defineStore('auth', () => {
       processing.value = false
     }
   }
+
+  watch(
+    authenticated,
+    (val) => {
+      window.localStorage.setItem('authenticated', JSON.stringify(val))
+    },
+    { deep: true }
+  )
 
   return {
     user,

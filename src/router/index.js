@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import { useAuthStore } from '../stores/auth'
-import { computed } from 'vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,36 +47,25 @@ const router = createRouter({
       meta: { title: 'Email Verify', middleware: 'auth' },
       component: () => import('../views/Auth/EmailVerify.vue'),
     },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/About.vue'),
-    },
   ],
 })
 
-// router.beforeEach(async (to, from, next) => {
-//   document.title = to.meta.title + ' :: ' + import.meta.env.VITE_APP_NAME
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title + ' :: ' + import.meta.env.VITE_APP_NAME
 
-//   const auth = useAuthStore()
-//   auth.setErrorsEmpty()
-//   await auth.getUser()
+  const auth = useAuthStore()
+  auth.setErrorsEmpty()
 
-//   if (to.meta.middleware == 'guest') {
-//     if (auth.authenticated) {
-//       next({ name: 'dashboard' })
-//     }
-//     next()
-//   } else {
-//     if (auth.authenticated) {
-//       next()
-//     } else {
-//       next({ name: 'login' })
-//     }
-//   }
-// })
+  const isLoggedIn = () =>
+    JSON.parse(window.localStorage.getItem('authenticated'))
+
+  if (to.meta.middleware == 'guest' && isLoggedIn()) {
+    next({ name: 'dashboard' })
+  } else if (to.meta.middleware == 'auth' && !isLoggedIn()) {
+    next({ name: 'home' })
+  } else {
+    next()
+  }
+})
 
 export default router
