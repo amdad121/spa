@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
@@ -159,14 +159,6 @@ export const useAuthStore = defineStore('auth', () => {
       processing.value = false
     }
   }
-
-  watch(
-    authenticated,
-    (val) => {
-      window.localStorage.setItem('authenticated', JSON.stringify(val))
-    },
-    { deep: true }
-  )
 
   return {
     user,

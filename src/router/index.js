@@ -50,18 +50,17 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   document.title = to.meta.title + ' :: ' + import.meta.env.VITE_APP_NAME
 
   const auth = useAuthStore()
+  await auth.getUser()
+
   auth.setErrorsEmpty()
 
-  const isLoggedIn = () =>
-    JSON.parse(window.localStorage.getItem('authenticated'))
-
-  if (to.meta.middleware == 'guest' && isLoggedIn()) {
+  if (to.meta.middleware == 'guest' && auth.authenticated) {
     next({ name: 'dashboard' })
-  } else if (to.meta.middleware == 'auth' && !isLoggedIn()) {
+  } else if (to.meta.middleware == 'auth' && !auth.authenticated) {
     next({ name: 'home' })
   } else {
     next()

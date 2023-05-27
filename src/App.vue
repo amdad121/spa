@@ -1,13 +1,9 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import { useAuthStore } from './stores/auth'
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 
 const auth = useAuthStore()
-
-onMounted(async () => {
-  await auth.getUser()
-})
 
 const loading = computed(() => auth.loading)
 </script>
